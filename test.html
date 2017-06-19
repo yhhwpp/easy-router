@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
   <title>test hash route</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -12,14 +13,20 @@
       line-height: 150%;
       width: 90%;
     }
+
     a {
-      font-size: 16px;padding: 10px
+      font-size: 16px;
+      padding: 10px
     }
-    #content{
-      font-size:20px;font-weight:bold;padding: 20px
+
+    #content {
+      font-size: 20px;
+      font-weight: bold;
+      padding: 20px
     }
   </style>
 </head>
+
 <body>
   <a href="#/index?index=1">异步加载首页</a>
   <a href="#/list?list=1">异步加载列表页</a>
@@ -28,37 +35,37 @@
   <div id="content">
     <p style="color:#333">默认首页内容</p>
   </div>
-
-  <script type="text/html" id="tpl_home">
-     <p style="color:#333">这是home页面</p>
-  </script>
-
-  <script type="text/javascript" >
-   	spaRouters.map('/index',function(transition){
-      spaRouters.asyncFun('js/index.js',transition)
-  	})
-  	spaRouters.map('/list',function(transition){
-      spaRouters.asyncFun('js/list.js',transition)
-  	})
-  	spaRouters.map('/detail',function(transition){
-      spaRouters.asyncFun('js/detail.js',transition)
-  	})
-  	spaRouters.map('/detail2',function(transition){
-      spaRouters.syncFun(function(transition){
-        document.getElementById("content").innerHTML = '<p style="color:#DD8C6F;">当前同步渲染详情页' + JSON.stringify(transition) +'</p>'
-      },transition)
+  <script type="text/javascript">
+    spaRouters.map('/index', function (transition) {
+      spaRouters.asyncFun('js/index.js', transition)
     })
-    spaRouters.beforeEach(function(transition){
+    spaRouters.map('/list', function (transition) {
+      spaRouters.asyncFun('js/list.js', transition)
+    })
+    spaRouters.map('/detail', function (transition) {
+      spaRouters.asyncFun('js/detail.js', transition)
+    })
+    spaRouters.map('/detail2', function (transition) {
+      spaRouters.syncFun(function (transition) {
+        document.getElementById("content").innerHTML = '<p style="color:#DD8C6F;">当前同步渲染详情页' + JSON.stringify(
+          transition) + '</p>'
+      }, transition)
+    })
+    spaRouters.beforeEach(function (transition) {
       console.log('切换之前dosomething')
-      setTimeout(function(){
+      setTimeout(function () {
         //模拟切换之前延迟，比如说做个异步登录信息验证
-         transition.next()
-      },100)
+        transition.next()
+      }, 100)
     })
-    spaRouters.afterEach(function(transition){
+    spaRouters.afterEach(function (transition) {
       console.log("切换之后dosomething")
     })
     spaRouters.init()
   </script>
+  <script type="text/html" id="tpl_home">
+    <p id="index">这是index真正页面</p>
+  </script>
 </body>
+
 </html>
