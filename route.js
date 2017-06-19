@@ -3,8 +3,8 @@
 		//获取路由的路径和详细参数
 		getParamsUrl: function () {
 			var hashDeatail = location.hash.split("?"),
-				hashName = hashDeatail[0].split("#")[1], 
-				params = hashDeatail[1] ? hashDeatail[1].split("&") : [], 
+				hashName = hashDeatail[0].split("#")[1],
+				params = hashDeatail[1] ? hashDeatail[1].split("&") : [],
 				query = {};
 			for (var i = 0; i < params.length; i++) {
 				var item = params[i].split("=");
@@ -35,20 +35,7 @@
 			window.SPA_RESOLVE_INIT = null;
 		},
 		refresh: function (currentHash) {
-			var self = this;
-			if (self.beforeFun) {
-				self.beforeFun({
-					to: {
-						path: currentHash.path,
-						query: currentHash.query
-					},
-					next: function () {
-						self.routers[currentHash.path].callback.call(self, currentHash);
-					}
-				});
-			} else {
-				self.routers[currentHash.path].callback.call(self, currentHash);
-			}
+			this.routers[currentHash.path].callback.call(self, currentHash);
 		},
 		//路由处理
 		urlChange: function () {
@@ -72,30 +59,12 @@
 				console.trace('注册' + path + '地址需要提供正确的的注册回调');
 			}
 		},
-		//切换之前一些处理
-		beforeEach: function (callback) {
-			if (Object.prototype.toString.call(callback) === '[object Function]') {
-				this.beforeFun = callback;
-			} else {
-				console.trace('路由切换前钩子函数不正确');
-			}
-		},
-		//切换成功之后
-		afterEach: function (callback) {
-			if (Object.prototype.toString.call(callback) === '[object Function]') {
-				this.afterFun = callback;
-			} else {
-				console.trace('路由切换后回调函数不正确');
-			}
-		},
 		//路由异步懒加载js文件
 		asyncFun: function (file, transition) {
 			var self = this;
 			if (self.routers[transition.path].fn) {
-				self.afterFun && self.afterFun(transition);
 				self.routers[transition.path].fn(transition);
 			} else {
-				console.log("开始异步下载js文件" + file);
 				var _body = document.getElementsByTagName('body')[0];
 				var scriptEle = document.createElement('script');
 				scriptEle.type = 'text/javascript';
@@ -103,8 +72,6 @@
 				scriptEle.async = true;
 				SPA_RESOLVE_INIT = null;
 				scriptEle.onload = function () {
-					console.log('下载' + file + '完成');
-					self.afterFun && self.afterFun(transition);
 					self.routers[transition.path].fn = SPA_RESOLVE_INIT;
 					self.routers[transition.path].fn(transition);
 				};
@@ -113,7 +80,6 @@
 		},
 		//同步操作
 		syncFun: function (callback, transition) {
-			this.afterFun && this.afterFun(transition);
 			callback && callback(transition);
 		}
 
